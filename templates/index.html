@@ -1,0 +1,127 @@
+<!DOCTYPE html>   <!-- This is an html declaration, telling us that this is an html type file  which is commented in this tag--> 
+<html lang="en">    <!-- The language here is english (en for english)--> 
+
+<head>                 <!-- The html head is the first section in the code containing information about a web page's properties and links to external related files, Metadata typically define the document title, character set, styles, scripts, and other Metadata information.--> 
+  <meta charset="UTF-8">     <!--This attribute declares the page's character encoding. It must contain a standard IANA MIME name for character encodings. Although the standard doesn't request a specific encoding, it suggests:Authors are encouraged to use UTF-8. --> 
+  <title>ATPLCBot</title>       <!-- This represents the document title name as ATPLC--> 
+  <meta charset="UTF-8">            <!--Authors are encouraged to use UTF8 --> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">      <!-- check this site for more explanation, https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta#attr-http-equiv--> 
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">                        <!--same as above in line 9 --> 
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">                    <!--The link element allows authors to link their document to other resources like the style.css in static folder --> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>                  <!--src signifies source of a link used for jQuery,jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers. --> 
+</head>          <!--This is the closing tag for the html head --> 
+
+<body>                         <!--The HTML <body> tag defines the main content of the HTML document or the section of the HTML document that will be directly visible on your web page --> 
+  <!-- partial:index.partial.html -->
+  <section class="msger">  <!-- A space-separated list of the classes of the element. Classes allows CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName()-->
+    <header class="msger-header">
+      <div class="msger-header-title">
+        <i class="fas fa-bug"></i> ATPLC Chatbot <i class="fas fa-bug"></i>
+      </div>
+    </header>
+
+    <main class="msger-chat">
+      <div class="msg left-msg">
+        <div class="msg-img" style="background-image: url(https://image.flaticon.com/icons/svg/327/327779.svg)"></div> <!--This is for selecting  image of the chatbot-->
+
+        <div class="msg-bubble">
+          <div class="msg-info">
+            <div class="msg-info-name">ATPLCBot</div>
+            <div class="msg-info-time">12:45</div>
+          </div>
+
+          <div class="msg-text">
+            Hi, welcome to ATPLCBot! Go ahead and send me a message. 😄
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <form class="msger-inputarea">
+      <input type="text" class="msger-input" id="textInput" placeholder="Enter your message...">
+      <button type="submit" class="msger-send-btn">Send</button>
+    </form>
+  </section>
+  <!-- partial -->
+  <script src='https://use.fontawesome.com/releases/v5.0.13/js/all.js'></script>
+  <script>
+
+    const msgerForm = get(".msger-inputarea");
+    const msgerInput = get(".msger-input");
+    const msgerChat = get(".msger-chat");
+
+
+    // Icons made by Freepik from www.flaticon.com
+    const BOT_IMG = "https://image.flaticon.com/icons/svg/327/327779.svg";
+    const PERSON_IMG = "https://image.flaticon.com/icons/svg/145/145867.svg";
+    const BOT_NAME = "ATPLCBot";
+    const PERSON_NAME = "You";
+
+    msgerForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const msgText = msgerInput.value;
+      if (!msgText) return;
+
+      appendMessage(PERSON_NAME, PERSON_IMG, "right", msgText);
+      msgerInput.value = "";
+      botResponse(msgText);
+    });
+
+    function appendMessage(name, img, side, text) {
+      //   Simple solution for small apps
+      const msgHTML = `
+<div class="msg ${side}-msg">
+  <div class="msg-img" style="background-image: url(${img})"></div>
+
+  <div class="msg-bubble">
+    <div class="msg-info">
+      <div class="msg-info-name">${name}</div>
+      <div class="msg-info-time">${formatDate(new Date())}</div>
+    </div>
+
+    <div class="msg-text">${text}</div>
+  </div>
+</div>
+`;
+
+      msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+      msgerChat.scrollTop += 500;
+    }
+
+    function botResponse(rawText) {
+
+      // Bot Response
+      $.get("/get", { msg: rawText }).done(function (data) {
+        console.log(rawText);
+        console.log(data);
+        const msgText = data;
+        appendMessage(BOT_NAME, BOT_IMG, "left", msgText);
+
+      });
+
+    }
+
+
+    // Utils
+    function get(selector, root = document) {
+      return root.querySelector(selector);
+    }
+
+    function formatDate(date) {
+      const h = "0" + date.getHours();
+      const m = "0" + date.getMinutes();
+
+      return `${h.slice(-2)}:${m.slice(-2)}`;
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>
+
+<!--End of the codes, hope you understood it?-->
